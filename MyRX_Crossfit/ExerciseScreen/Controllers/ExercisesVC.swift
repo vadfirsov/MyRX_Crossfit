@@ -22,11 +22,13 @@ class ExercisesVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     @IBOutlet weak var editBarBtn: UIBarButtonItem!
     @IBOutlet weak var tableView: UITableView!
     
+    private let dbManager = CoreDataManager()
+    private let alertManager = AlertManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
-        print(paths[0])
-        loadExercisesFromDB()
+        alertManager.delegate = self
+        exercises = dbManager.exercisesFromDB()
     }
     
     //MARK: - TABLEVIEW METHODS -
@@ -45,63 +47,12 @@ class ExercisesVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditMode {
-            showEditExerciseNameAlert(exerciseIndex: indexPath.row)
+            alertManager.showEditExerciseNameAlert(in: self, exerciseIndex: indexPath.row)
         }
         else {
             cellIndex = indexPath.row
             performSegue(withIdentifier: segueID, sender: self)
         }
-    }
-    
-    //MARK: - ALERT METHODS -
-    private func showAddNewRowAlert() {
-
-        let alert = UIAlertController(title: "Add New Exercise", message: nil, preferredStyle: .alert)
-        alert.addTextField { (tf) in tf.placeholder = "Exerice Name" }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { (_) in
-
-            guard let exercise = alert.textFields?.first?.text else { return }
-
-            if self.exercises.contains(where: { $0.name == exercise }) {
-                self.showExerciseAlreadyExistsAlert()
-            }
-            else {
-                self.save(exercisee: exercise)
-            }
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    private func showEditExerciseNameAlert(exerciseIndex index : Int) {
-        let alert = UIAlertController(title: "Change Exercise Name", message: nil, preferredStyle: .alert)
-        alert.addTextField { (tf) in tf.placeholder = "Exerice Name" }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Change", style: .default, handler: { (_) in
-            
-            guard let exercise = alert.textFields?.first?.text else { return }
-            self.edit(exercise: exercise, atIndex: index)
-        }))
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    private func showDeleteExerciseAlert(exerciseIndex index : Int) {
-        let alert = UIAlertController(title: "Uh - Oh!", message: "You are about to delete an exercise", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            
-            self.delete(exercise: self.exercises[index].name!)
-        }))
-
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    private func showExerciseAlreadyExistsAlert() {
-        let alert = UIAlertController(title: "Uh - Oh!", message: "Exercise already exists!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-
     }
     
     //MARK: - NAV BAR METHODS -
@@ -115,67 +66,7 @@ class ExercisesVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     }
     
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
-        showAddNewRowAlert()
-    }
-    
-    //MARK: - CORE DATA -
-    func save(exercisee : String) {
-    
-        let context = AppDelegate.viewContext
-        let exercise = Exercise(context: context)
-        exercise.name = exercisee
-        
-        do { try context.save() }
-        catch { print(error.localizedDescription) }
-        
-        loadExercisesFromDB()
-    }
-    
-    func loadExercisesFromDB() {
-        
-        let request : NSFetchRequest<Exercise> = Exercise.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(
-            key: "name",
-            ascending: true,
-            selector: #selector(NSString.localizedStandardCompare(_:))
-        )]
-        let context = AppDelegate.viewContext
-        do {
-            exercises = try context.fetch(request)
-        }
-        catch {
-            print(error.localizedDescription)
-        }
-        tableView.reloadData()
-    }
-    
-    func edit(exercise exerciseName : String, atIndex index : Int) {
-        let request : NSFetchRequest<Exercise> = Exercise.fetchRequest()
-        let context = AppDelegate.viewContext
-        let exercisesDB = try? context.fetch(request)
-        for exercise in exercisesDB! {
-            if exercise.name == exercises[index].name {
-                exercise.name = exerciseName
-            }
-        }
-        
-        do { try context.save() }
-        catch { print(error.localizedDescription) }
-        
-        loadExercisesFromDB()
-
-    }
-    
-    func delete(exercise exerciseName : String) {
-        let request : NSFetchRequest<Exercise> = Exercise.fetchRequest()
-        let context = AppDelegate.viewContext
-        let exercisesDB = try? context.fetch(request)
-        for exercise in exercisesDB! {
-            if exercise.name == exerciseName {
-                context.delete(exercise)
-            }
-        }
-        loadExercisesFromDB()
+        alertManager.showAddNewRowAlert(inVC: self, andUpdate: exercises)
     }
     
     //MARK: - SEGUE METHODS -
@@ -186,10 +77,30 @@ class ExercisesVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     }
 }
 
-extension ExercisesVC : ExerciseCellDelegate {
+extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate {
+    //MARK: - CUSTOM ALERT DELEGATE -
+    func received(indexToDelete index: Int) {
+        exercises = dbManager.delete(exercise: exercises[index])
+        tableView.reloadData()
+    }
+    
+    func received(editedExerciseName name: String, atIndex index: Int) {
+        if exercises.contains(where: { $0.name == name }) { alertManager.showExerciseAlreadyExistsAlert(in: self)
+            
+        }
+        else {
+            exercises = dbManager.edit(exercise: exercises[index], newName: name)
+            tableView.reloadData()
+        }
+    }
+
+    func received(newExerciseName name: String) {
+        exercises = dbManager.save(exerciseName: name)
+        tableView.reloadData()
+    }
     
     //MARK: - CELL DELEGATE -
     func deleteBtnTapped(cellIndex: Int) {
-        showDeleteExerciseAlert(exerciseIndex: cellIndex)
+        alertManager.showDeleteExerciseAlert(in: self, exerciseIndex: cellIndex)
     }
 }

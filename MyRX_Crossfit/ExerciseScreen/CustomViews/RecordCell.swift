@@ -17,13 +17,14 @@ protocol RecordCellDelegate {
 class RecordCell: UITableViewCell {
 
     var delegate : RecordCellDelegate?
-    
+    var cellIndex = 0
     private var isPickersAvailable = false
     private var componentNum = 1
     
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var weightAndRepsLabel: UILabel!
-    
+    @IBOutlet weak var delBtn: UIButton!
+
     override func awakeFromNib() {
 
         
@@ -38,10 +39,9 @@ class RecordCell: UITableViewCell {
 
     }
 
-    @IBAction func deleteTapped(_ sender: UIButton) {
-    
+    @IBAction func deleteCell(_ sender: UIButton) {
+        delegate?.deleteRow(atIndex: cellIndex)
     }
-
     
     
 }

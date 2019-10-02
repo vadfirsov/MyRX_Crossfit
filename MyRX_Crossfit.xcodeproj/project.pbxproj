@@ -19,6 +19,8 @@
 		DA68C46E23436FED00970D79 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA68C46D23436FED00970D79 /* Exercise.swift */; };
 		DA68C4752343D29500970D79 /* ExerciseRec.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA68C4742343D29500970D79 /* ExerciseRec.swift */; };
 		DA68C4772343DF2B00970D79 /* RecordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA68C4762343DF2B00970D79 /* RecordCell.swift */; };
+		DAB9EA0E2344D14500450558 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB9EA0D2344D14500450558 /* CoreDataManager.swift */; };
+		DAB9EA112344D90D00450558 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB9EA102344D90D00450558 /* AlertManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		DA68C46D23436FED00970D79 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		DA68C4742343D29500970D79 /* ExerciseRec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRec.swift; sourceTree = "<group>"; };
 		DA68C4762343DF2B00970D79 /* RecordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCell.swift; sourceTree = "<group>"; };
+		DAB9EA0D2344D14500450558 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		DAB9EA102344D90D00450558 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +74,7 @@
 			children = (
 				DA00CDDB23434F360058FA83 /* AppDelegate.swift */,
 				DA00CDDD23434F360058FA83 /* SceneDelegate.swift */,
+				DAB9EA0F2344D14D00450558 /* Managers */,
 				DA68C4712343700900970D79 /* NSManagedObjects */,
 				DA68C4672343632A00970D79 /* ExerciseScreen */,
 				DA00CDE123434F360058FA83 /* Main.storyboard */,
@@ -123,6 +128,15 @@
 				DA68C4742343D29500970D79 /* ExerciseRec.swift */,
 			);
 			path = NSManagedObjects;
+			sourceTree = "<group>";
+		};
+		DAB9EA0F2344D14D00450558 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				DAB9EA0D2344D14500450558 /* CoreDataManager.swift */,
+				DAB9EA102344D90D00450558 /* AlertManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DA00CDE023434F360058FA83 /* ExercisesVC.swift in Sources */,
+				DAB9EA112344D90D00450558 /* AlertManager.swift in Sources */,
 				DA00CDDC23434F360058FA83 /* AppDelegate.swift in Sources */,
 				DA68C4772343DF2B00970D79 /* RecordCell.swift in Sources */,
 				DA68C4752343D29500970D79 /* ExerciseRec.swift in Sources */,
@@ -204,6 +219,7 @@
 				DA00CDDE23434F360058FA83 /* SceneDelegate.swift in Sources */,
 				DA68C46E23436FED00970D79 /* Exercise.swift in Sources */,
 				DA54A25F2344BF2D006A7BB3 /* Model.xcdatamodeld in Sources */,
+				DAB9EA0E2344D14500450558 /* CoreDataManager.swift in Sources */,
 				DA68C46623435E0700970D79 /* ExerciseDetailsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
