@@ -59,18 +59,21 @@ class CoreDataManager {
     }
     
     //MARK: - RECORDS METHODS -
-    func saveNewRecord(toExercise exercise: Exercise, withReps reps : String, date : String, weight : String) -> [ExerciseRec] {
+    func saveNewRecord(toExercise exercise: Exercise, withReps reps : String, dateStr : String, weight : String, date : Date) -> [ExerciseRec] {
         
         let rec = ExerciseRec(context: context)
                 
+        rec.dateStr = dateStr
         rec.date = date
-
+        
         if let repsDouble = Double(reps) { rec.reps = repsDouble }
         else { }//alert that it should be numba!
 
         if let weightDouble = Double(weight) { rec.weight = weightDouble }
         else { } //show alert
-                
+              
+        
+        
         rec.exercise = exercise
         saveContext()
             
@@ -82,8 +85,8 @@ class CoreDataManager {
         let request : NSFetchRequest<ExerciseRec> = ExerciseRec.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
             key: "date",
-            ascending: true,
-            selector: #selector(NSString.localizedStandardCompare(_:)))]
+            ascending: false
+            )]
         
         var recs = [ExerciseRec]()
 
