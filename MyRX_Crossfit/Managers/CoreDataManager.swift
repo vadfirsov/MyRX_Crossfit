@@ -12,7 +12,6 @@ import CoreData
 class CoreDataManager {
     
     let context = AppDelegate.viewContext
-    let request : NSFetchRequest<Exercise> = Exercise.fetchRequest()
     
     //MARK: - EXERCISE METHODS -
     func save(exerciseName : String) -> [Exercise] {
@@ -24,12 +23,12 @@ class CoreDataManager {
     }
         
     func exercisesFromDB() -> [Exercise] {
-            
+        
+        let request : NSFetchRequest<Exercise> = Exercise.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
         key: "name",
         ascending: true,
-        selector: #selector(NSString.localizedStandardCompare(_:))
-        )]
+        selector: #selector(NSString.localizedStandardCompare(_:)))]
         do {
             let exercises = try context.fetch(request)
             return exercises
@@ -81,7 +80,11 @@ class CoreDataManager {
     func recsOf(exercise : Exercise) -> [ExerciseRec] {
             
         let request : NSFetchRequest<ExerciseRec> = ExerciseRec.fetchRequest()
-        let context = AppDelegate.viewContext
+        request.sortDescriptors = [NSSortDescriptor(
+            key: "date",
+            ascending: true,
+            selector: #selector(NSString.localizedStandardCompare(_:)))]
+        
         var recs = [ExerciseRec]()
 
         do {
