@@ -14,10 +14,17 @@ protocol AlertManagerDelegate {
     func received(indexToDelete index : Int)
 }
 
+extension AlertManagerDelegate {
+    func received(newExerciseName name : String) { }
+    func received(editedExerciseName name : String, atIndex index : Int) { }
+    func received(indexToDelete index : Int) { }
+}
+
 class AlertManager {
     
     var delegate : AlertManagerDelegate?
     
+    //MARK: - EXERCISE METHODS -
     func showAddNewRowAlert(inVC vc : UIViewController, andUpdate exercises : [Exercise]) {
 
         let alert = UIAlertController(title: "Add New Exercise", message: nil, preferredStyle: .alert)
@@ -33,6 +40,7 @@ class AlertManager {
                 self.delegate?.received(newExerciseName: exerciseName)
             }
         }))
+        
         vc.present(alert, animated: true, completion: nil)
     }
     
@@ -50,24 +58,27 @@ class AlertManager {
 
             guard let exerciseName = alert.textFields?.first?.text else { return }
             self.delegate?.received(editedExerciseName: exerciseName, atIndex: index)
-
-            
         }))
 
         vc.present(alert, animated: true, completion: nil)
     }
 
-    func showDeleteExerciseAlert(in vc : UIViewController, exerciseIndex index : Int) {
-        let alert = UIAlertController(title: "Uh - Oh!", message: "You are about to delete an exercise", preferredStyle: .alert)
+    // showDeleteExerciseAlert and showDeleteRecAlert should be merged
+    func showDeleteAlert(in vc : UIViewController, exerciseIndex index : Int) {
+        let alert = UIAlertController(title: "Uh - Oh!", message: "You are about to delete the item!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-//            self.exercises = self.dbManager.delete(exercise: self.exercises[index])
-//            self.tableView.reloadData()
             self.delegate?.received(indexToDelete: index)
         }))
 
         vc.present(alert, animated: true, completion: nil)
     }
     
+    //MARK: - RECS METHODS -
+    func showMissingParamAlert(in vc : UIViewController) {
+        let alert = UIAlertController(title: "Uh - Oh!", message: "You can't save record with empty/bad rows!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        vc.present(alert, animated: true, completion: nil)
+    }
 
 }

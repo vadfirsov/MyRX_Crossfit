@@ -19,10 +19,7 @@ class CoreDataManager {
         
         let exerciseContext = Exercise(context: context)
         exerciseContext.name = exerciseName
-            
-        do { try context.save() }
-        catch { print(error.localizedDescription) }
-            
+        saveContext()
         return exercisesFromDB()
     }
         
@@ -51,15 +48,65 @@ class CoreDataManager {
             if ex.name == exercise.name { ex.name = newName }
         }
         
-        do { try context.save() }
-        catch { print(error.localizedDescription) }
+        saveContext()
         return exercisesFromDB()
     }
     
     func delete(exercise : Exercise) -> [Exercise] {
         context.delete(exercise)
+        saveContext()
+        
+        return exercisesFromDB()
+    }
+    
+    //MARK: - RECORDS METHODS -
+    func saveNewRecord(toExercise exercise: Exercise, withReps reps : String, date : String, weight : String) -> [ExerciseRec] {
+        
+        let rec = ExerciseRec(context: context)
+                
+        rec.date = date
+
+        if let repsDouble = Double(reps) { rec.reps = repsDouble }
+        else { }//alert that it should be numba!
+
+        if let weightDouble = Double(weight) { rec.weight = weightDouble }
+        else { } //show alert
+                
+        rec.exercise = exercise
+        saveContext()
+            
+        return recsOf(exercise: exercise)
+    }
+        
+    func recsOf(exercise : Exercise) -> [ExerciseRec] {
+            
+        let request : NSFetchRequest<ExerciseRec> = ExerciseRec.fetchRequest()
+        let context = AppDelegate.viewContext
+        var recs = [ExerciseRec]()
+
+        do {
+            let exerciseRecs = try context.fetch(request)
+            for rec in exerciseRecs {
+                if rec.exercise == exercise {
+                    recs.append(rec)
+                }
+            }
+        }
+        catch {
+            print(error.localizedDescription)
+        }
+        
+        return recs
+    }
+        
+    func delete(rec : ExerciseRec, inEercise exercise : Exercise) -> [ExerciseRec] {
+        context.delete(rec)
+        saveContext()
+        return recsOf(exercise: exercise)
+    }
+    
+    private func saveContext() {
         do { try context.save() }
         catch { print(error.localizedDescription) }
-        return exercisesFromDB()
     }
 }

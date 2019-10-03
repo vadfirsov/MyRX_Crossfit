@@ -15,6 +15,8 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
     private let cellID = "RECORD_CELL_ID"
     var exercise = Exercise()
     private var recs = [ExerciseRec]()
+    private let dbManager = CoreDataManager()
+    private let alertManager = AlertManager()
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -29,18 +31,16 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
         super.viewDidLoad()
         addRecordView.isHidden = true
         self.title = exercise.name
-//        if let records
-//        if let records = exercise.exerciseRecs?.allObjects as? [ExerciseRec] { recs = records }
+
         datePicker.datePickerMode = .date
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        
-        loadExerciseRecsFromDB()
+        alertManager.delegate = self
+        dateTF.text = stringDateFrom(date: datePicker.date)
+        recs = dbManager.recsOf(exercise: exercise)
     }
-
     
     //MARK: - BUTTON FUNCS -
     @IBAction func saveNewRec(_ sender: UIButton) {
-        addRecordView.isHidden = true
         saveNewRecord()
     }
     
@@ -61,24 +61,25 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     //MARK: - CORE DATA -
     private func saveNewRecord() {
-    
-        let context = AppDelegate.viewContext
-        let rec = ExerciseRec(context: context)
-            
-        rec.date = dateTF.text
         
-        if let reps = Double(repsTF.text!) { rec.reps = reps }
-        else { }//alert
-    
-        if let weight = Double(weightTF.text!) { rec.weight = weight }
-        else { } //show alert
-            
-        rec.exercise = exercise
+        addRecordView.isHidden = true
+
+        let reps = repsTF.text ?? ""
+        let weight = weightTF.text ?? ""
+        let date = dateTF.text ?? ""
         
-        do { try context.save() }
-        catch { print(error.localizedDescription) }
+        if reps.isNumeric && weight.isNumeric && date != "" {
+            recs = dbManager.saveNewRecord(toExercise: exercise, withReps: reps, date: date, weight: weight)
+        }
+        else {
+            alertManager.showMissingParamAlert(in: self)
+        }
         
-        loadExerciseRecsFromDB()
+        repsTF.text = ""
+        weightTF.text = ""
+        dateTF.text = ""
+
+        tableView.reloadData()
     }
     
     private func loadExerciseRecsFromDB() {
@@ -99,35 +100,6 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
             print(error.localizedDescription)
         }
         tableView.reloadData()
-    }
-    
-//    private func edit(exercise exerciseName : String, atIndex index : Int) {
-//        let request : NSFetchRequest<Exercise> = Exercise.fetchRequest()
-//        let context = AppDelegate.viewContext
-//        let exercisesDB = try? context.fetch(request)
-//        for exercise in exercisesDB! {
-//            if exercise.name == exercises[index].name {
-//                exercise.name = exerciseName
-//            }
-//        }
-//
-//        do { try context.save() }
-//        catch { print(error.localizedDescription) }
-//
-//        loadExercisesFromDB()
-//
-//    }
-    
-    func delete(exercise : Exercise) {
-        let request : NSFetchRequest<ExerciseRec> = ExerciseRec.fetchRequest()
-        let context = AppDelegate.viewContext
-        let recs = try? context.fetch(request)
-        for rec in recs! {
-            if rec.exercise == exercise {
-                context.delete(rec)
-            }
-        }
-//        loadExercisesFromDB()
     }
     
     //MARK: - DATE METHODS -
@@ -160,29 +132,25 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
         cell.cellIndex = indexPath.row
         return cell
     }
-    
-    //MARK: - ALERT METHODS -
-    private func showDeleteExerciseAlert(recIndex index : Int) {
-        let alert = UIAlertController(title: "Uh - Oh!", message: "You are about to delete a record!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            let context = AppDelegate.viewContext
-            context.delete(self.recs[index])
-            self.loadExerciseRecsFromDB()
-//            self.delete(exercise: self.recs[index].name!)
-        }))
+}
 
-        self.present(alert, animated: true, completion: nil)
+extension ExerciseDetailsVC : RecordCellDelegate, AlertManagerDelegate {
+    //MARK: - CUSTOM ALERT DELEGATE -
+    func received(indexToDelete index: Int) {
+        recs = dbManager.delete(rec: recs[index], inEercise: exercise)
+        tableView.reloadData()
+    }
+    
+    //MARK: - CUSTOM CELL DELEGATE -
+    func deleteRow(atIndex index: Int) {
+        alertManager.showDeleteAlert(in: self, exerciseIndex: index)
     }
 }
 
-extension ExerciseDetailsVC : RecordCellDelegate {
-    func deleteRow(atIndex index: Int) {
-        showDeleteExerciseAlert(recIndex: index)
-//        recs.remove(at: index)
-//        let request : NSFetchRequest<ExerciseRec> = ExerciseRec.fetchRequest()
-  
-    
+extension String {
+    var isNumeric: Bool {
+        guard self.count > 0 else { return false }
+        let nums: Set<Character> = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        return Set(self).isSubset(of: nums)
     }
-
 }

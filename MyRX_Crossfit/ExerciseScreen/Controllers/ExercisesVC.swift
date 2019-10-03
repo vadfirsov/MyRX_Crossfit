@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class ExercisesVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ExercisesVC: UIViewController {
 
     private let cellID = "EXERCISE_CELL_ID"
     private let segueID = "GO_TO_EXERCISE_DETAILS"
@@ -29,6 +29,53 @@ class ExercisesVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
         super.viewDidLoad()
         alertManager.delegate = self
         exercises = dbManager.exercisesFromDB()
+    }
+    
+    //MARK: - NAV BAR METHODS -
+    @IBAction func editTapped(_ sender: UIBarButtonItem) {
+        isEditMode = isEditMode ? false : true
+        addBarBtn.isEnabled = !isEditMode
+        editBarBtn.title = isEditMode ? "Save" : "Edit"
+        tableView.reloadData()
+    }
+    
+    @IBAction func addTapped(_ sender: UIBarButtonItem) {
+        alertManager.showAddNewRowAlert(inVC: self, andUpdate: exercises)
+    }
+    
+    //MARK: - SEGUE METHODS -
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let destinationVC = segue.destination as? ExerciseDetailsVC else { return }
+        destinationVC.exercise = exercises[cellIndex]
+    }
+}
+
+extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewDelegate, UITableViewDataSource {
+    
+    //MARK: - CUSTOM ALERT DELEGATE -
+    func received(indexToDelete index: Int) {
+        exercises = dbManager.delete(exercise: exercises[index])
+        tableView.reloadData()
+    }
+    
+    func received(editedExerciseName name: String, atIndex index: Int) {
+        if exercises.contains(where: { $0.name == name }) { alertManager.showExerciseAlreadyExistsAlert(in: self)
+            
+        }
+        else {
+            exercises = dbManager.edit(exercise: exercises[index], newName: name)
+            tableView.reloadData()
+        }
+    }
+
+    func received(newExerciseName name: String) {
+        exercises = dbManager.save(exerciseName: name)
+        tableView.reloadData()
+    }
+    
+    //MARK: - CELL DELEGATE -
+    func deleteBtnTapped(cellIndex: Int) {
+        alertManager.showDeleteAlert(in: self, exerciseIndex: cellIndex)
     }
     
     //MARK: - TABLEVIEW METHODS -
@@ -53,54 +100,5 @@ class ExercisesVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
             cellIndex = indexPath.row
             performSegue(withIdentifier: segueID, sender: self)
         }
-    }
-    
-    //MARK: - NAV BAR METHODS -
-    @IBAction func editTapped(_ sender: UIBarButtonItem) {
-        
-        isEditMode = isEditMode ? false : true
-        addBarBtn.isEnabled = !isEditMode
-        editBarBtn.title = isEditMode ? "Save" : "Edit"
-        
-        tableView.reloadData()
-    }
-    
-    @IBAction func addTapped(_ sender: UIBarButtonItem) {
-        alertManager.showAddNewRowAlert(inVC: self, andUpdate: exercises)
-    }
-    
-    //MARK: - SEGUE METHODS -
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let destinationVC = segue.destination as? ExerciseDetailsVC else { return }
-        destinationVC.exercise = exercises[cellIndex]
-        
-    }
-}
-
-extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate {
-    //MARK: - CUSTOM ALERT DELEGATE -
-    func received(indexToDelete index: Int) {
-        exercises = dbManager.delete(exercise: exercises[index])
-        tableView.reloadData()
-    }
-    
-    func received(editedExerciseName name: String, atIndex index: Int) {
-        if exercises.contains(where: { $0.name == name }) { alertManager.showExerciseAlreadyExistsAlert(in: self)
-            
-        }
-        else {
-            exercises = dbManager.edit(exercise: exercises[index], newName: name)
-            tableView.reloadData()
-        }
-    }
-
-    func received(newExerciseName name: String) {
-        exercises = dbManager.save(exerciseName: name)
-        tableView.reloadData()
-    }
-    
-    //MARK: - CELL DELEGATE -
-    func deleteBtnTapped(cellIndex: Int) {
-        alertManager.showDeleteExerciseAlert(in: self, exerciseIndex: cellIndex)
     }
 }
