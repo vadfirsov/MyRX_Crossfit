@@ -50,6 +50,7 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     @IBAction func addButtonTapped(_ sender: UIBarButtonItem) {
          addRecordView.isHidden = false
+        dateTF.text = stringDateFrom(date: datePicker.date)
      }
      
     @IBAction func editButtonTapped(_ sender: UIBarButtonItem) {
@@ -66,10 +67,11 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
 
         let reps = repsTF.text ?? ""
         let weight = weightTF.text ?? ""
-        let date = dateTF.text ?? ""
+        let dateStr = dateTF.text ?? ""
+        let date = datePicker.date
         
-        if reps.isNumeric && weight.isNumeric && date != "" {
-            recs = dbManager.saveNewRecord(toExercise: exercise, withReps: reps, date: date, weight: weight)
+        if reps.isNumeric && weight.isNumeric && dateStr != "" {
+            recs = dbManager.saveNewRecord(toExercise: exercise, withReps: reps, dateStr: dateStr, weight: weight, date : date)
         }
         else {
             alertManager.showMissingParamAlert(in: self)
@@ -112,8 +114,7 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     @objc func dateChanged() {
-        let dateString = stringDateFrom(date: datePicker.date)
-        dateTF.text = dateString
+        dateTF.text = stringDateFrom(date: datePicker.date)
     }
     
     //MARK: - TABLEVIEW -
@@ -126,7 +127,7 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
         
         let weightAndReps = "You've done \(Int(recs[indexPath.row].reps)) reps with \(recs[indexPath.row].weight) kg!"
         cell.weightAndRepsLabel.text = weightAndReps
-        cell.dateLabel.text = recs[indexPath.row].date
+        cell.dateLabel.text = recs[indexPath.row].dateStr
         cell.delegate = self
         cell.delBtn.isHidden = !isEditingNow
         cell.cellIndex = indexPath.row
