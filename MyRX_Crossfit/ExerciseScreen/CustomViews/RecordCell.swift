@@ -9,8 +9,6 @@
 import UIKit
 
 protocol RecordCellDelegate {
-//    func pickerWasChosen()
-//    func addNewRecordTapped()
     func deleteRow(atIndex index : Int)
 }
 
@@ -25,23 +23,11 @@ class RecordCell: UITableViewCell {
     @IBOutlet weak var weightAndRepsLabel: UILabel!
     @IBOutlet weak var delBtn: UIButton!
 
-    override func awakeFromNib() {
-
-        
-    }
-    
-    private func newCellAllowEditing() {
-        
-    }
-
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
     }
 
     @IBAction func deleteCell(_ sender: UIButton) {
         delegate?.deleteRow(atIndex: cellIndex)
     }
-    
-    
 }

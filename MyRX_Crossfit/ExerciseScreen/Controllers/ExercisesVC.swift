@@ -9,20 +9,23 @@
 import UIKit
 import CoreData
 
+//TODO: need to change name of class
 class ExercisesVC: UIViewController {
 
-    private let cellID = "EXERCISE_CELL_ID"
+    private let cellID =  "EXERCISE_CELL_ID"
     private let segueID = "GO_TO_EXERCISE_DETAILS"
-
-    private var isEditMode = false
-    private var exercises = [Exercise]()
-    private var cellIndex = 0
-        
-    @IBOutlet weak var addBarBtn: UIBarButtonItem!
-    @IBOutlet weak var editBarBtn: UIBarButtonItem!
-    @IBOutlet weak var tableView: UITableView!
+    private let exerciseSegmentIndex = 0
     
-    private let dbManager = CoreDataManager()
+    private var isEditMode = false
+    private var exercises =  [Exercise]()
+    private var cellIndex =  0
+    
+    @IBOutlet weak var addBarBtn:  UIBarButtonItem!
+    @IBOutlet weak var editBarBtn: UIBarButtonItem!
+    @IBOutlet weak var tableView:  UITableView!
+    @IBOutlet weak var segment:    UISegmentedControl!
+
+    private let dbManager =    CoreDataManager()
     private let alertManager = AlertManager()
     
     override func viewDidLoad() {
@@ -31,7 +34,12 @@ class ExercisesVC: UIViewController {
         exercises = dbManager.exercisesFromDB()
     }
     
-    //MARK: - NAV BAR METHODS -
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        tableView.reloadData()
+    }
+    
+    //MARK: - NAV BAR BUTTONS -
     @IBAction func editTapped(_ sender: UIBarButtonItem) {
         isEditMode = isEditMode ? false : true
         addBarBtn.isEnabled = !isEditMode
@@ -48,6 +56,13 @@ class ExercisesVC: UIViewController {
         guard let destinationVC = segue.destination as? ExerciseDetailsVC else { return }
         destinationVC.exercise = exercises[cellIndex]
     }
+    //MARK: - SEGMENT METHODS -
+    @IBAction func segmentValueChanged(_ sender: UISegmentedControl) {
+        
+        self.title = segment.titleForSegment(at: segment.selectedSegmentIndex)
+        tableView.reloadData()
+    }
+    
 }
 
 extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewDelegate, UITableViewDataSource {
@@ -67,8 +82,7 @@ extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewD
             tableView.reloadData()
         }
     }
-
-    func received(newExerciseName name: String) {
+    func received(newEntityName name: String) {
         exercises = dbManager.save(exerciseName: name)
         tableView.reloadData()
     }
@@ -85,11 +99,15 @@ extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? ExerciseCell else { return UITableViewCell() }
-        cell.deleteBtn.isHidden = !isEditMode
-        cell.nameLabel.text = exercises[indexPath.row].name
-        cell.cellIndex = indexPath.row
-        cell.delegate = self
-        return cell
+            cell.delegate           = self
+            cell.deleteBtn.isHidden = !isEditMode
+            cell.nameLabel.text     = exercises[indexPath.row].name
+            cell.cellIndex          = indexPath.row
+            
+            let repsAndWeight       = dbManager.lastRecordedRepsAndWeightOf(exercise: exercises[indexPath.row])
+
+            cell.setLabel(withReps: repsAndWeight.0, weight: repsAndWeight.1, unit: .kg)
+            return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

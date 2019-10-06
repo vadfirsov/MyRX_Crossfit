@@ -109,7 +109,6 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         let dateString = formatter.string(from: date)
-
         return dateString
     }
     
@@ -124,8 +123,11 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? RecordCell else { return UITableViewCell() }
-        
-        let weightAndReps = "You've done \(Int(recs[indexPath.row].reps)) reps with \(recs[indexPath.row].weight) kg!"
+
+        let repsStr = "You've done \(Int(recs[indexPath.row].reps)) reps"
+        var weightStr = " with \(recs[indexPath.row].weight) \(WeightMeasurmentUnits.kg)"
+        if recs[indexPath.row].weight == 0 { weightStr = " with no weight" }
+        let weightAndReps = repsStr + weightStr
         cell.weightAndRepsLabel.text = weightAndReps
         cell.dateLabel.text = recs[indexPath.row].dateStr
         cell.delegate = self

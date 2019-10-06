@@ -10,8 +10,13 @@ import UIKit
 
 class WorkoutCell: UITableViewCell {
 
+    @IBOutlet weak var moreDetailsView: UIView!
+    @IBOutlet weak var workoutView: UIView!
+    //    var showMoreDetails = false
+    
     override func awakeFromNib() {
         super.awakeFromNib()
+//        moreDetailsView.isHidden = !showMoreDetails
         // Initialization code
     }
 
@@ -22,3 +27,4 @@ class WorkoutCell: UITableViewCell {
     }
 
 }
+

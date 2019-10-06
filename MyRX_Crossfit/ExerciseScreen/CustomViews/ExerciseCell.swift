@@ -16,6 +16,7 @@ class ExerciseCell: UITableViewCell {
     
     var cellIndex = 0
     var delegate : ExerciseCellDelegate?
+    var weightMeasurementUnit = "kg"
     
     @IBOutlet weak var deleteBtn: UIButton!
     
@@ -27,8 +28,13 @@ class ExerciseCell: UITableViewCell {
         delegate?.deleteBtnTapped(cellIndex: cellIndex)
     }
     
-    func setLabel(withReps reps : Int, weight : Double) {
-        repsAndWeightLabel.text = "\(reps) x \(weight)"
+    func setLabel(withReps reps : Int, weight : Double, unit : WeightMeasurmentUnits) {
+        var weightStr              = "\(weight) reps"
+        if weight == 0 { weightStr = "no weight!" }
+        repsAndWeightLabel.text    = "\(reps) reps w/ " + weightStr
     }
-    
+}
+
+enum WeightMeasurmentUnits {
+    case kg, lbs
 }

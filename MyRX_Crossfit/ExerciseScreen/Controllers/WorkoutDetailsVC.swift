@@ -1,5 +1,5 @@
 //
-//  Workout.swift
+//  WorkoutDetailsVC.swift
 //  MyRX_Crossfit
 //
 //  Created by VADIM FIRSOV on 03/10/2019.
@@ -7,8 +7,11 @@
 //
 
 import UIKit
-import CoreData
 
-class WorkoutRec: NSManagedObject {
+class WorkoutDetailsVC: UIViewController {
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
 }

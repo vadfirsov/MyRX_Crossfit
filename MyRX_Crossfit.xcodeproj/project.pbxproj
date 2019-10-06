@@ -21,6 +21,10 @@
 		DA68C4772343DF2B00970D79 /* RecordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA68C4762343DF2B00970D79 /* RecordCell.swift */; };
 		DAB9EA0E2344D14500450558 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB9EA0D2344D14500450558 /* CoreDataManager.swift */; };
 		DAB9EA112344D90D00450558 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB9EA102344D90D00450558 /* AlertManager.swift */; };
+		DAB9EA1B2349BF0B00450558 /* WorkoutsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB9EA1A2349BF0B00450558 /* WorkoutsVC.swift */; };
+		DAB9EA1D2349BF2000450558 /* WorkoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB9EA1C2349BF2000450558 /* WorkoutCell.swift */; };
+		DAF5C4012349D0300003D182 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF5C4002349D0300003D182 /* Workout.swift */; };
+		DAF5C4072349E0940003D182 /* AddWorkoutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF5C4062349E0940003D182 /* AddWorkoutVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +44,10 @@
 		DA68C4762343DF2B00970D79 /* RecordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCell.swift; sourceTree = "<group>"; };
 		DAB9EA0D2344D14500450558 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		DAB9EA102344D90D00450558 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
+		DAB9EA1A2349BF0B00450558 /* WorkoutsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsVC.swift; sourceTree = "<group>"; };
+		DAB9EA1C2349BF2000450558 /* WorkoutCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCell.swift; sourceTree = "<group>"; };
+		DAF5C4002349D0300003D182 /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
+		DAF5C4062349E0940003D182 /* AddWorkoutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWorkoutVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,16 +80,17 @@
 		DA00CDDA23434F360058FA83 /* MyRX_Crossfit */ = {
 			isa = PBXGroup;
 			children = (
-				DA00CDDB23434F360058FA83 /* AppDelegate.swift */,
-				DA00CDDD23434F360058FA83 /* SceneDelegate.swift */,
-				DAB9EA0F2344D14D00450558 /* Managers */,
 				DA68C4712343700900970D79 /* NSManagedObjects */,
+				DAB9EA0F2344D14D00450558 /* Managers */,
+				DAB9EA192349BCC900450558 /* WorkoutScreen */,
 				DA68C4672343632A00970D79 /* ExerciseScreen */,
-				DA00CDE123434F360058FA83 /* Main.storyboard */,
+				DA00CDDB23434F360058FA83 /* AppDelegate.swift */,
 				DA00CDE723434F380058FA83 /* Assets.xcassets */,
-				DA00CDE923434F380058FA83 /* LaunchScreen.storyboard */,
 				DA00CDEC23434F380058FA83 /* Info.plist */,
+				DA00CDE923434F380058FA83 /* LaunchScreen.storyboard */,
+				DA00CDE123434F360058FA83 /* Main.storyboard */,
 				DA54A25D2344BF2D006A7BB3 /* Model.xcdatamodeld */,
+				DA00CDDD23434F360058FA83 /* SceneDelegate.swift */,
 			);
 			path = MyRX_Crossfit;
 			sourceTree = "<group>";
@@ -126,6 +135,7 @@
 			children = (
 				DA68C46D23436FED00970D79 /* Exercise.swift */,
 				DA68C4742343D29500970D79 /* ExerciseRec.swift */,
+				DAF5C4002349D0300003D182 /* Workout.swift */,
 			);
 			path = NSManagedObjects;
 			sourceTree = "<group>";
@@ -137,6 +147,32 @@
 				DAB9EA102344D90D00450558 /* AlertManager.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		DAB9EA192349BCC900450558 /* WorkoutScreen */ = {
+			isa = PBXGroup;
+			children = (
+				DAB9EA1F2349BF3700450558 /* Controllers */,
+				DAB9EA1E2349BF2600450558 /* CustomViews */,
+			);
+			path = WorkoutScreen;
+			sourceTree = "<group>";
+		};
+		DAB9EA1E2349BF2600450558 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				DAB9EA1C2349BF2000450558 /* WorkoutCell.swift */,
+			);
+			path = CustomViews;
+			sourceTree = "<group>";
+		};
+		DAB9EA1F2349BF3700450558 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				DAB9EA1A2349BF0B00450558 /* WorkoutsVC.swift */,
+				DAF5C4062349E0940003D182 /* AddWorkoutVC.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,15 +247,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				DA00CDE023434F360058FA83 /* ExercisesVC.swift in Sources */,
+				DAB9EA1D2349BF2000450558 /* WorkoutCell.swift in Sources */,
 				DAB9EA112344D90D00450558 /* AlertManager.swift in Sources */,
+				DAF5C4072349E0940003D182 /* AddWorkoutVC.swift in Sources */,
 				DA00CDDC23434F360058FA83 /* AppDelegate.swift in Sources */,
 				DA68C4772343DF2B00970D79 /* RecordCell.swift in Sources */,
 				DA68C4752343D29500970D79 /* ExerciseRec.swift in Sources */,
 				DA00CDF323434FED0058FA83 /* ExerciseCell.swift in Sources */,
 				DA00CDDE23434F360058FA83 /* SceneDelegate.swift in Sources */,
 				DA68C46E23436FED00970D79 /* Exercise.swift in Sources */,
+				DAF5C4012349D0300003D182 /* Workout.swift in Sources */,
 				DA54A25F2344BF2D006A7BB3 /* Model.xcdatamodeld in Sources */,
 				DAB9EA0E2344D14500450558 /* CoreDataManager.swift in Sources */,
+				DAB9EA1B2349BF0B00450558 /* WorkoutsVC.swift in Sources */,
 				DA68C46623435E0700970D79 /* ExerciseDetailsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
