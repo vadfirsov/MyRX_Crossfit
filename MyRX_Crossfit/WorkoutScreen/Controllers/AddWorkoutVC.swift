@@ -16,22 +16,22 @@ class AddWorkoutVC: UIViewController {
     
     var delegate : AddWorkoutDelegate?
     
-    
-    
-    @IBOutlet weak var titleTF: UITextField!
-    @IBOutlet weak var dateTF: UITextField!
+    @IBOutlet weak var titleTF:    UITextField!
+    @IBOutlet weak var dateTF:     UITextField!
     @IBOutlet weak var timeRepsTF: UITextField!
-    @IBOutlet weak var detailsTV: UITextView!
-    @IBOutlet weak var weightsTF: UITextField!
+    @IBOutlet weak var detailsTV:  UITextView!
+    @IBOutlet weak var weightsTF:  UITextField!
     @IBOutlet weak var datePicker: UIDatePicker!
     
-    let dbManager = CoreDataManager()
+    @IBOutlet var contentHolders: [UIView]!
+    @IBOutlet var buttons: [UIButton]!
+    
+    private let dbManager = CoreDataManager()
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        showRow()
-        titleTF.isHidden = titleTF.isHidden ? false : true
         initDatePicker()
+        setTextFields()
     }
     
     //MARK: - DATE METHODS -
@@ -54,50 +54,55 @@ class AddWorkoutVC: UIViewController {
     
     //MARK: - ADD BUTTON -
     @IBAction func savedTapped(_ sender: UIBarButtonItem) {
-        let context = AppDelegate.viewContext
-        let workout = Workout(context: context)
-        workout.date = datePicker.date
+        let context =        AppDelegate.viewContext
+        let workout =        Workout(context: context)
+        workout.date =       datePicker.date
         workout.dateString = dateTF.text
-        workout.details = detailsTV.text
-        workout.time = timeRepsTF.text
-        workout.weights = weightsTF.text
+        workout.details =    detailsTV.text
+        workout.time =       timeRepsTF.text
+        workout.weights =    weightsTF.text
+        workout.title =      titleTF.text
         
         let workouts = dbManager.save(workout: workout)
         delegate?.received(workouts: workouts)
         self.navigationController?.popViewController(animated: true)
     }
     
+    //MARK: - BUTTONS -
     @IBAction func titleTapped(_ sender: UIButton) {
-        showRow()
-//        titleTF.isHidden = titleTF.isHidden ? false : true
+        showRow(ofBtn: sender)
     }
     
     @IBAction func dateTapped(_ sender: UIButton) {
-        showRow()
-//        dateTF.isHidden = dateTF.isEditing ? false : true
-//        datePicker.isHidden = datePicker.isHidden ? false : true
+        showRow(ofBtn: sender)
     }
     
     @IBAction func detailsTapped(_ sender: UIButton) {
-        showRow()
-//        detailsTV.isHidden = detailsTV.isHidden ? false : true
+        showRow(ofBtn: sender)
     }
     
     @IBAction func resultTapped(_ sender: UIButton) {
-        showRow()
-//        timeRepsTF.isHidden = timeRepsTF.isHidden ? false : true
-//        weightsTF.isHidden = weightsTF.isHidden ? false : true
+        showRow(ofBtn: sender)
     }
     
-    private func showRow() {
-        titleTF.isHidden = titleTF.isHidden ? false : true
-        dateTF.isHidden = dateTF.isEditing ? false : true
-        datePicker.isHidden = datePicker.isHidden ? false : true
-        detailsTV.isHidden = detailsTV.isHidden ? false : true
-        timeRepsTF.isHidden = timeRepsTF.isHidden ? false : true
-        weightsTF.isHidden = weightsTF.isHidden ? false : true
+    private func showRow(ofBtn sender : UIButton) {
+        for i in buttons.indices {
+            if buttons[i] == sender {
+                for view in contentHolders[i].subviews { view.isHidden = true }
+                animateContentHolder(atIndex: i)
+            }
+        }
     }
     
+    private func setTextFields() {
+        for view in contentHolders {
+           view.isHidden = true
+        }
+    }
     
-    
+    private func animateContentHolder(atIndex index : Int) {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.contentHolders[index].isHidden = self.contentHolders[index].isHidden ? false : true
+        }) { (_) in for view in self.contentHolders[index].subviews { view.isHidden = false } }
+    }
 }
