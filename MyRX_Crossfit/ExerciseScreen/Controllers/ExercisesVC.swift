@@ -23,7 +23,6 @@ class ExercisesVC: UIViewController {
     @IBOutlet weak var addBarBtn:  UIBarButtonItem!
     @IBOutlet weak var editBarBtn: UIBarButtonItem!
     @IBOutlet weak var tableView:  UITableView!
-    @IBOutlet weak var segment:    UISegmentedControl!
 
     private let dbManager =    CoreDataManager()
     private let alertManager = AlertManager()
@@ -56,13 +55,6 @@ class ExercisesVC: UIViewController {
         guard let destinationVC = segue.destination as? ExerciseDetailsVC else { return }
         destinationVC.exercise = exercises[cellIndex]
     }
-    //MARK: - SEGMENT METHODS -
-    @IBAction func segmentValueChanged(_ sender: UISegmentedControl) {
-        
-        self.title = segment.titleForSegment(at: segment.selectedSegmentIndex)
-        tableView.reloadData()
-    }
-    
 }
 
 extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewDelegate, UITableViewDataSource {
@@ -89,7 +81,7 @@ extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewD
     
     //MARK: - CELL DELEGATE -
     func deleteBtnTapped(cellIndex: Int) {
-        alertManager.showDeleteAlert(in: self, exerciseIndex: cellIndex)
+        alertManager.showDeleteAlert(in: self, itemIndex: cellIndex)
     }
     
     //MARK: - TABLEVIEW METHODS -
@@ -99,15 +91,14 @@ extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? ExerciseCell else { return UITableViewCell() }
-            cell.delegate           = self
-            cell.deleteBtn.isHidden = !isEditMode
-            cell.nameLabel.text     = exercises[indexPath.row].name
-            cell.cellIndex          = indexPath.row
+        cell.delegate           = self
+        cell.nameLabel.text     = exercises[indexPath.row].name
+        cell.cellIndex          = indexPath.row
             
-            let repsAndWeight       = dbManager.lastRecordedRepsAndWeightOf(exercise: exercises[indexPath.row])
-
-            cell.setLabel(withReps: repsAndWeight.0, weight: repsAndWeight.1, unit: .kg)
-            return cell
+        let repsAndWeight       = dbManager.lastRecordedRepsAndWeightOf(exercise: exercises[indexPath.row])
+        cell.showDeleteButton(ifEditMode: isEditMode)
+        cell.setLabel(withReps: repsAndWeight.0, weight: repsAndWeight.1, unit: .kg)
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

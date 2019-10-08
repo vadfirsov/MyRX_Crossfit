@@ -64,7 +64,7 @@ class AlertManager {
     }
 
     // showDeleteExerciseAlert and showDeleteRecAlert should be merged
-    func showDeleteAlert(in vc : UIViewController, exerciseIndex index : Int) {
+    func showDeleteAlert(in vc : UIViewController, itemIndex index : Int) {
         let alert = UIAlertController(title: "Uh - Oh!", message: "You are about to delete the item!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in

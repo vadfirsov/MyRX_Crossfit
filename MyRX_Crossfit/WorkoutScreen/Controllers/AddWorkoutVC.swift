@@ -15,6 +15,7 @@ protocol AddWorkoutDelegate {
 class AddWorkoutVC: UIViewController {
     
     var delegate : AddWorkoutDelegate?
+    var workout = [Workout]()
     
     @IBOutlet weak var titleTF:    UITextField!
     @IBOutlet weak var dateTF:     UITextField!
@@ -69,21 +70,7 @@ class AddWorkoutVC: UIViewController {
     }
     
     //MARK: - BUTTONS -
-    @IBAction func titleTapped(_ sender: UIButton) {
-        showRow(ofBtn: sender)
-    }
-    
-    @IBAction func dateTapped(_ sender: UIButton) {
-        showRow(ofBtn: sender)
-    }
-    
-    @IBAction func detailsTapped(_ sender: UIButton) {
-        showRow(ofBtn: sender)
-    }
-    
-    @IBAction func resultTapped(_ sender: UIButton) {
-        showRow(ofBtn: sender)
-    }
+    @IBAction func buttonTapped(_ sender: UIButton) { showRow(ofBtn: sender) }
     
     private func showRow(ofBtn sender : UIButton) {
         for i in buttons.indices {

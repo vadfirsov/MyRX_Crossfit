@@ -8,23 +8,32 @@
 
 import UIKit
 
+protocol WorkoutCellDelegate {
+    func deleteWorkoutAt(index : Int)
+}
+
 class WorkoutCell: UITableViewCell {
 
-    @IBOutlet weak var moreDetailsView: UIView!
-    @IBOutlet weak var workoutView: UIView!
-    //    var showMoreDetails = false
+    var cellIndex = 0
+    var delegate : WorkoutCellDelegate?
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-//        moreDetailsView.isHidden = !showMoreDetails
-        // Initialization code
+    @IBOutlet weak var dateLabel:  UILabel!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var delBtn:     UIButton!
+    
+    @IBOutlet weak var titlesLeadingConst: NSLayoutConstraint!
+    
+    @IBAction func delBtnTapped(_ sender: UIButton) {
+        delegate?.deleteWorkoutAt(index: cellIndex)
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func showDeleteButton(ifEditMode editMode : Bool) {
+        titlesLeadingConst.constant = editMode ? 72 : 14
+        self.delBtn.isHidden = false
+        UIView.animate(withDuration: 0.8) {
+            if editMode { self.delBtn.frame.size.width = 200 }
+            else { self.delBtn.isHidden = true }
+        }
     }
-
 }
 

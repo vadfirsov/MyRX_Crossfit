@@ -73,7 +73,7 @@ class CoreDataManager {
         let request : NSFetchRequest<Workout> = Workout.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
         key: "date",
-        ascending: true)]
+        ascending: false)]
         do {
             let workouts = try context.fetch(request)
             return workouts
@@ -84,24 +84,15 @@ class CoreDataManager {
             return [Workout]()
         }
     }
-    
-//    func saveWorokout(withDate date : Date, time : String, weights : String, details : String) -> [Workout] {
-//
-//        let workoutContext = Workout(context: context)
-//
-//        workoutContext.details = details
-//        workoutContext.weights = weights
-//        workoutContext.time = time
-//        workoutContext.date = date
-//
-//        saveContext()
-//
-//        return workoutsFromDB()
-//    }
+
     func save(workout : Workout) -> [Workout] {
-//        let workoutContext = workout
         saveContext()
-        
+        return workoutsFromDB()
+    }
+    
+    func delete(workout : Workout) -> [Workout] {
+        context.delete(workout)
+        saveContext()
         return workoutsFromDB()
     }
 

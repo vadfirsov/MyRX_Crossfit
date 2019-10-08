@@ -123,17 +123,20 @@ class ExerciseDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? RecordCell else { return UITableViewCell() }
-
-        let repsStr = "You've done \(Int(recs[indexPath.row].reps)) reps"
-        var weightStr = " with \(recs[indexPath.row].weight) \(WeightMeasurmentUnits.kg)"
-        if recs[indexPath.row].weight == 0 { weightStr = " with no weight" }
-        let weightAndReps = repsStr + weightStr
-        cell.weightAndRepsLabel.text = weightAndReps
-        cell.dateLabel.text = recs[indexPath.row].dateStr
-        cell.delegate = self
-        cell.delBtn.isHidden = !isEditingNow
-        cell.cellIndex = indexPath.row
+        setup(cell: cell, withIndex: indexPath.row)
         return cell
+    }
+    
+    private func setup(cell : RecordCell, withIndex index : Int) {
+        let repsStr = "You've done \(Int(recs[index].reps)) reps"
+        var weightStr = " with \(recs[index].weight) \(WeightMeasurmentUnits.kg)"
+        if recs[index].weight == 0 { weightStr = " with no weight" }
+        let weightAndReps =            repsStr + weightStr
+        cell.weightAndRepsLabel.text = weightAndReps
+        cell.dateLabel.text =          recs[index].dateStr
+        cell.delegate =                self
+        cell.cellIndex =               index
+        cell.showDeleteButton(ifEditMode: isEditingNow)
     }
 }
 
@@ -146,7 +149,7 @@ extension ExerciseDetailsVC : RecordCellDelegate, AlertManagerDelegate {
     
     //MARK: - CUSTOM CELL DELEGATE -
     func deleteRow(atIndex index: Int) {
-        alertManager.showDeleteAlert(in: self, exerciseIndex: index)
+        alertManager.showDeleteAlert(in: self, itemIndex: index)
     }
 }
 
