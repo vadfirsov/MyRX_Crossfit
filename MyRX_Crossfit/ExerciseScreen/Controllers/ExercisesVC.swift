@@ -9,20 +9,22 @@
 import UIKit
 import CoreData
 
+//TODO: need to change name of class
 class ExercisesVC: UIViewController {
 
-    private let cellID = "EXERCISE_CELL_ID"
+    private let cellID =  "EXERCISE_CELL_ID"
     private let segueID = "GO_TO_EXERCISE_DETAILS"
-
-    private var isEditMode = false
-    private var exercises = [Exercise]()
-    private var cellIndex = 0
-        
-    @IBOutlet weak var addBarBtn: UIBarButtonItem!
-    @IBOutlet weak var editBarBtn: UIBarButtonItem!
-    @IBOutlet weak var tableView: UITableView!
+    private let exerciseSegmentIndex = 0
     
-    private let dbManager = CoreDataManager()
+    private var isEditMode = false
+    private var exercises =  [Exercise]()
+    private var cellIndex =  0
+    
+    @IBOutlet weak var addBarBtn:  UIBarButtonItem!
+    @IBOutlet weak var editBarBtn: UIBarButtonItem!
+    @IBOutlet weak var tableView:  UITableView!
+
+    private let dbManager =    CoreDataManager()
     private let alertManager = AlertManager()
     
     override func viewDidLoad() {
@@ -31,7 +33,12 @@ class ExercisesVC: UIViewController {
         exercises = dbManager.exercisesFromDB()
     }
     
-    //MARK: - NAV BAR METHODS -
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        tableView.reloadData()
+    }
+    
+    //MARK: - NAV BAR BUTTONS -
     @IBAction func editTapped(_ sender: UIBarButtonItem) {
         isEditMode = isEditMode ? false : true
         addBarBtn.isEnabled = !isEditMode
@@ -67,15 +74,14 @@ extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewD
             tableView.reloadData()
         }
     }
-
-    func received(newExerciseName name: String) {
+    func received(newEntityName name: String) {
         exercises = dbManager.save(exerciseName: name)
         tableView.reloadData()
     }
     
     //MARK: - CELL DELEGATE -
     func deleteBtnTapped(cellIndex: Int) {
-        alertManager.showDeleteAlert(in: self, exerciseIndex: cellIndex)
+        alertManager.showDeleteAlert(in: self, itemIndex: cellIndex)
     }
     
     //MARK: - TABLEVIEW METHODS -
@@ -85,10 +91,13 @@ extension ExercisesVC : ExerciseCellDelegate, AlertManagerDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? ExerciseCell else { return UITableViewCell() }
-        cell.deleteBtn.isHidden = !isEditMode
-        cell.nameLabel.text = exercises[indexPath.row].name
-        cell.cellIndex = indexPath.row
-        cell.delegate = self
+        cell.delegate           = self
+        cell.nameLabel.text     = exercises[indexPath.row].name
+        cell.cellIndex          = indexPath.row
+            
+        let repsAndWeight       = dbManager.lastRecordedRepsAndWeightOf(exercise: exercises[indexPath.row])
+        cell.showDeleteButton(ifEditMode: isEditMode)
+        cell.setLabel(withReps: repsAndWeight.0, weight: repsAndWeight.1, unit: .kg)
         return cell
     }
     

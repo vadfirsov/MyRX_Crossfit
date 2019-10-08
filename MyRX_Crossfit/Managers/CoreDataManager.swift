@@ -34,6 +34,7 @@ class CoreDataManager {
             return exercises
         }
         catch {
+            //TODO: show alert with error
             print(error.localizedDescription)
             return [Exercise]()
         }
@@ -58,6 +59,44 @@ class CoreDataManager {
         return exercisesFromDB()
     }
     
+    func lastRecordedRepsAndWeightOf(exercise : Exercise) -> (Int,Double) {
+        let recs =          recsOf(exercise: exercise)
+        guard let lastRec = recs.first else { return (0,0) }
+        let reps =          Int(lastRec.reps)
+        let weight =        lastRec.weight
+        return (reps,weight)
+    }
+    
+    //MARK: - WORKOUTS METHODS -
+    func workoutsFromDB() -> [Workout] {
+        
+        let request : NSFetchRequest<Workout> = Workout.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(
+        key: "date",
+        ascending: false)]
+        do {
+            let workouts = try context.fetch(request)
+            return workouts
+        }
+        catch {
+            //TODO: show alert with error
+            print(error.localizedDescription)
+            return [Workout]()
+        }
+    }
+
+    func save(workout : Workout) -> [Workout] {
+        saveContext()
+        return workoutsFromDB()
+    }
+    
+    func delete(workout : Workout) -> [Workout] {
+        context.delete(workout)
+        saveContext()
+        return workoutsFromDB()
+    }
+
+    
     //MARK: - RECORDS METHODS -
     func saveNewRecord(toExercise exercise: Exercise, withReps reps : String, dateStr : String, weight : String, date : Date) -> [ExerciseRec] {
         
@@ -71,8 +110,6 @@ class CoreDataManager {
 
         if let weightDouble = Double(weight) { rec.weight = weightDouble }
         else { } //show alert
-              
-        
         
         rec.exercise = exercise
         saveContext()

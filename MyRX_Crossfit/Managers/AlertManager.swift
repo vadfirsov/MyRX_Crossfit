@@ -9,13 +9,13 @@
 import UIKit
 
 protocol AlertManagerDelegate {
-    func received(newExerciseName name : String)
+    func received(newEntityName name : String)
     func received(editedExerciseName name : String, atIndex index : Int)
     func received(indexToDelete index : Int)
 }
 
 extension AlertManagerDelegate {
-    func received(newExerciseName name : String) { }
+    func received(newEntityName name : String) { }
     func received(editedExerciseName name : String, atIndex index : Int) { }
     func received(indexToDelete index : Int) { }
 }
@@ -37,7 +37,7 @@ class AlertManager {
                 self.showExerciseAlreadyExistsAlert(in: vc)
             }
             else {
-                self.delegate?.received(newExerciseName: exerciseName)
+                self.delegate?.received(newEntityName: exerciseName)
             }
         }))
         
@@ -64,7 +64,7 @@ class AlertManager {
     }
 
     // showDeleteExerciseAlert and showDeleteRecAlert should be merged
-    func showDeleteAlert(in vc : UIViewController, exerciseIndex index : Int) {
+    func showDeleteAlert(in vc : UIViewController, itemIndex index : Int) {
         let alert = UIAlertController(title: "Uh - Oh!", message: "You are about to delete the item!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in

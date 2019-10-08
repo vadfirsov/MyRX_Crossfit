@@ -9,8 +9,6 @@
 import UIKit
 
 protocol RecordCellDelegate {
-//    func pickerWasChosen()
-//    func addNewRecordTapped()
     func deleteRow(atIndex index : Int)
 }
 
@@ -25,23 +23,21 @@ class RecordCell: UITableViewCell {
     @IBOutlet weak var weightAndRepsLabel: UILabel!
     @IBOutlet weak var delBtn: UIButton!
 
-    override func awakeFromNib() {
-
-        
-    }
-    
-    private func newCellAllowEditing() {
-        
-    }
-
+    @IBOutlet weak var titlesLeadingConst: NSLayoutConstraint!
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
     }
 
     @IBAction func deleteCell(_ sender: UIButton) {
         delegate?.deleteRow(atIndex: cellIndex)
     }
     
-    
+    func showDeleteButton(ifEditMode editMode : Bool) {
+        titlesLeadingConst.constant = editMode ? 72 : 14
+        self.delBtn.isHidden = false
+        UIView.animate(withDuration: 0.8) {
+            if editMode { self.delBtn.frame.size.width = 200 }
+            else { self.delBtn.isHidden = true }
+        }
+    }
 }

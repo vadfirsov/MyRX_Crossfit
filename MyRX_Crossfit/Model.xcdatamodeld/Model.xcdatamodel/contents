@@ -14,8 +14,18 @@
             <fetchRequest name="fetchedPropertyFetchRequest" entity="ExerciseRec"/>
         </fetchedProperty>
     </entity>
+    <entity name="Workout" representedClassName=".Workout" syncable="YES" codeGenerationType="category">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dateString" optional="YES" attributeType="String"/>
+        <attribute name="details" optional="YES" attributeType="String"/>
+        <attribute name="shouldShowDetails" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="weights" optional="YES" attributeType="String"/>
+    </entity>
     <elements>
         <element name="Exercise" positionX="-321.3046875" positionY="72.2734375" width="128" height="73"/>
         <element name="ExerciseRec" positionX="-36" positionY="9" width="128" height="146"/>
+        <element name="Workout" positionX="-162" positionY="81" width="128" height="148"/>
     </elements>
 </model>

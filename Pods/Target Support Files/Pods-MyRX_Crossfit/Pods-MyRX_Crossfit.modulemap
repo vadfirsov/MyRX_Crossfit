@@ -1,0 +1,6 @@
+framework module Pods_MyRX_Crossfit {
+  umbrella header "Pods-MyRX_Crossfit-umbrella.h"
+
+  export *
+  module * { export * }
+}
